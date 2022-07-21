@@ -65,7 +65,9 @@ export class Player implements IPlayer {
     }
 
     public verifyCanBuyProperty(): void {
-        if (this.currentProperty.getOwner()) {
+        if (this.currentProperty.getOwner() && this.currentProperty.getOwner()?.getProfile() === this.getProfile()) {
+            this.logger.error(`Não pode comprar a propriedade atual pois já é dono dela`, this.getProfile());
+        } else if (this.currentProperty.getOwner()) {
             this.logger.error(`Não pode comprar a propriedade atual pois ela já tem um dono`, this.getProfile());
         } else if (this.money >= this.currentProperty.getSalePrice()) {
             this.buyCurrentProperty();
