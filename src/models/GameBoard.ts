@@ -1,3 +1,5 @@
+import Logger from '@ptkdev/logger'
+
 import { IPlayer } from "../interfaces/IPlayer";
 import { CautiousPlayer } from "./CautiousPlayer";
 import { DemandingPlayer } from "./DemandingPlayer";
@@ -10,14 +12,17 @@ export class GameBoard {
     private dice  = [1, 2, 3, 4, 5, 6];
     private players;
     private properties;
+    private logger;
 
     constructor() {
         const zeroProperty = new Property(0, 0, 0);
+        const logger = new Logger();
+        this.logger = logger;
         this.players = [
-            new CautiousPlayer(zeroProperty),
-            new DemandingPlayer(zeroProperty),
-            new ImpulsivePlayer(zeroProperty),
-            new RandomPlayer(zeroProperty)
+            new CautiousPlayer(zeroProperty, logger),
+            new DemandingPlayer(zeroProperty, logger),
+            new ImpulsivePlayer(zeroProperty, logger),
+            new RandomPlayer(zeroProperty, logger)
         ];
         this.properties = [
             new Property(1, 10, 5),
@@ -49,6 +54,7 @@ export class GameBoard {
 
         while(round < 1000) {
             this.players.forEach(player => {
+                round = this.handleRoundInfo(round);
                 const diceNumber = player.throwDice(this.dice);
                 const playerCurrentProperty = player.getCurrentProperty();
                 const calculatePostion =  playerCurrentProperty.getId() !== 0 ? playerCurrentProperty.getId() + diceNumber : diceNumber;
@@ -64,19 +70,30 @@ export class GameBoard {
                 const nextProperty = this.properties[propertyIndexPosition];
     
                 player.moveToNextProperty(nextProperty);
-                round++;
-                console.log('Round: ' + round)
             });
         }
+    }
+
+    private handleRoundInfo(round: number) {
+        round++;
+
+        console.log('--------------------------------------');
+        console.log('|                                    |');
+        console.log('|                                    |');
+        console.log(`|            ROUND: ${round}              |`);
+        console.log('|                                    |');
+        console.log('|                                    |');
+        console.log('--------------------------------------');
+
+        return round;
     }
 
     public getPlayers(): IPlayer[] {
         return this.players;
     }
 
-    public applyFullBackBonus(player: IPlayer): void {
+    private applyFullBackBonus(player: IPlayer): void {
         player.addMoney(this.fullBackBonus);
-
-        console.log(`- O jogador ${player.getProfile()} completou uma volta no tabuleiro e recebeu R$${this.fullBackBonus} como bônus.`)
+        this.logger.info(`Completou uma volta no tabuleiro e recebeu R$${this.fullBackBonus} como bônus`, player.getProfile())
     }
 }

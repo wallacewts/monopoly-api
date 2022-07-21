@@ -1,16 +1,19 @@
+import Logger from "@ptkdev/logger";
 import { Player } from "./Player";
 import { Property } from "./Property";
 
 export class DemandingPlayer extends Player {
-    constructor(currentProperty: Property) {
-        super('Exigente', currentProperty)
+    private requirementRent = 50;
+
+    constructor(currentProperty: Property, logger: Logger) {
+        super('Exigente', currentProperty, logger)
     }
 
     override buyCurrentProperty(): void {
-        if (this.currentProperty.getRentalPrice() > 50) {
+        if (this.currentProperty.getRentalPrice() > this.requirementRent) {
             this.currentProperty.setOwner(this);
             this.subtractMoney(this.currentProperty.getSalePrice());
-            console.log(`- O jogador ${this.getProfile()} comprou a propriedade ${this.currentProperty.getId()} pois o valor de aluguel dela é de R$${this.currentProperty.getRentalPrice()}.`);
+            this.logger.info(`Comprou a propriedade ${this.currentProperty.getId()} pois o valor de aluguel dela é R$${this.currentProperty.getRentalPrice()} maior que sua exigência de R$${this.requirementRent}`, this.getProfile())
         }
     }
 }
