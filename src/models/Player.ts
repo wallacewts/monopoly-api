@@ -4,16 +4,26 @@ import { Property } from "./Property"
 import Logger from '@ptkdev/logger'
 
 export class Player implements IPlayer {
+    order: number;
     profile: string
     money: number
     currentProperty: Property;
     logger: Logger;
 
     constructor(profile: string, currentProperty: Property, logger: Logger) {
+        this.order = 0;
         this.profile = profile
         this.currentProperty = currentProperty;
         this.money = 300
         this.logger = logger;
+    }
+
+    public getOrder(): number {
+        return this.order;
+    }
+
+    public setOrder(order: number): void {
+        this.order = order;
     }
 
     public getCurrentProperty(): Property {

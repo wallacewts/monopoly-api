@@ -106,7 +106,13 @@ export class GameBoard {
             const winnerPlayer = this.players[0];
             this.finishedPlayers.unshift(winnerPlayer);
         } else {
-            const playersOrderedByMoney = this.players.sort((playerA, playerB) => playerA.getMoney() - playerB.getMoney());
+            const playersOrderedByMoney = this.players.sort((playerA, playerB) => {
+                if (playerA.getMoney() === playerB.getMoney()) {
+                    return playerA.getOrder() - playerB.getOrder();
+                }
+
+                return playerA.getMoney() - playerB.getMoney();
+            });
             playersOrderedByMoney.forEach(player => {
                 this.finishedPlayers.unshift(player);
             })
@@ -119,9 +125,10 @@ export class GameBoard {
         this.logger.info(`Posição aleatória dos jogadores definida`, 'Game Board')
 
         randomPlayers.forEach((player, index) => {
-            const posicao = index + 1;
+            const order = index + 1;
 
-            this.logger.info(`${posicao}º a jogar`, player.getProfile());
+            player.setOrder(order)
+            this.logger.info(`${order}º a jogar`, player.getProfile());
         })
 
         return randomPlayers;
