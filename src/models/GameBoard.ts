@@ -51,7 +51,7 @@ export class GameBoard {
 
     public start(): void {
         const maxRounds = process.env.MAX_ROUNDS ? parseInt(process.env.MAX_ROUNDS) : 0;
-        const maxLoserPlayers = 2;
+        const maxLoserPlayers = 3;
         this.players = this.randomizePlayersPosition();
         let round = 0;
 
@@ -84,6 +84,32 @@ export class GameBoard {
                 this.verifyIfProperyHasOwner(nextProperty, player);
                 this.verifyPlayerNegativeBalance(player);
             });
+        }
+
+        this.orderLastPlayers(maxLoserPlayers);
+        this.showFinalResult();
+    }
+
+    private showFinalResult(): void {
+        this.logger.info(`Jogo encerrado`, 'Game Board');
+        this.logger.info(`${this.finishedPlayers[0].getProfile()} foi o ganhador`, 'Game Board');
+
+        this.finishedPlayers.forEach((player, index) => {
+            const position = index + 1;
+            
+            this.logger.info(`${player.getProfile()}`, `${position}º`);
+        });
+    }
+
+    private orderLastPlayers(maxLoserPlayers: number): void {
+        if (this.finishedPlayers.length == maxLoserPlayers) {
+            const winnerPlayer = this.players[0];
+            this.finishedPlayers.unshift(winnerPlayer);
+        } else {
+            const playersOrderedByMoney = this.players.sort((playerA, playerB) => playerA.getMoney() - playerB.getMoney());
+            playersOrderedByMoney.forEach(player => {
+                this.finishedPlayers.unshift(player);
+            })
         }
     }
 
