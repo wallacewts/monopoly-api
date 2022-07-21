@@ -50,12 +50,21 @@ export class GameBoard {
     }
 
     public start(): void {
+        const maxRounds = process.env.MAX_ROUNDS ? parseInt(process.env.MAX_ROUNDS) : 0;
+        const maxLoserPlayers = 2;
+        this.players = this.randomizePlayersPosition();
         let round = 0;
-        this.players = this.players.sort(() => Math.random() - 0.5);
 
-        while(this.finishedPlayers.length !== 2) {
+        this.logger.info(`Jogo iniciado`, 'Game Board')
+
+        while(this.finishedPlayers.length < maxLoserPlayers && round < maxRounds) {
             this.players.forEach(player => {
-                round = this.handleRoundInfo(round);
+                round += 1;
+
+                if (round > maxRounds) return;
+
+                this.handleRoundInfo(round);
+
                 const diceNumber = player.throwDice(this.dice);
                 const playerCurrentProperty = player.getCurrentProperty();
                 const calculatePostion =  playerCurrentProperty.getId() !== 0 ? playerCurrentProperty.getId() + diceNumber : diceNumber;
@@ -76,6 +85,20 @@ export class GameBoard {
                 this.verifyPlayerNegativeBalance(player);
             });
         }
+    }
+
+    public randomizePlayersPosition(): IPlayer[] {
+        const randomPlayers = this.players.sort(() => Math.random() - 0.5);
+
+        this.logger.info(`Posição aleatória dos jogadores definida`, 'Game Board')
+
+        randomPlayers.forEach((player, index) => {
+            const posicao = index + 1;
+
+            this.logger.info(`${posicao}º a jogar`, player.getProfile());
+        })
+
+        return randomPlayers;
     }
 
     verifyPlayerNegativeBalance(player: IPlayer) {
@@ -105,8 +128,6 @@ export class GameBoard {
     }
 
     private handleRoundInfo(round: number) {
-        round++;
-
         console.log('--------------------------------------');
         console.log('|                                    |');
         console.log('|                                    |');
@@ -114,8 +135,6 @@ export class GameBoard {
         console.log('|                                    |');
         console.log('|                                    |');
         console.log('--------------------------------------');
-
-        return round;
     }
 
     public getPlayers(): IPlayer[] {
