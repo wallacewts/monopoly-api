@@ -12,10 +12,17 @@ app.get('/jogo/simular', (request, response) => {
     const gameBoard = new GameBoard();
     
     gameBoard.start();
-    response.json(gameBoard.getFinishedPlayers().map(player => ({
+
+    const mappedPlayers = gameBoard.getFinishedPlayers().map((player, index) => ({
+        posicao: index + 1,
         name: player.getProfile(),
         money: player.getMoney()
-    })))
+    }))
+
+    response.json({
+        vencedor: mappedPlayers[0].name,
+        jogadores: mappedPlayers
+    })
 })
 
 app.listen(port, () => {
