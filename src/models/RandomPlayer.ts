@@ -13,9 +13,9 @@ export class RandomPlayer extends Player {
         if (randomNumber === 1) {
             this.currentProperty.setOwner(this);
             this.subtractMoney(this.currentProperty.getSalePrice());
-            this.logger.info(`Parou na proprieadade ${this.currentProperty.getId()} sem dono e decidiu compra-la`, this.getProfile())
+            this.logger.info(`Decidiu comprar a propriedade em que parou`, this.getProfile())
         } else {
-            this.logger.info(`Parou na proprieadade ${this.currentProperty.getId()} sem dono, mas não quis compra-la`, this.getProfile())
+            this.logger.info(`Não quis comprar a propriedade dessa vez`, this.getProfile())
         }
     }
 }

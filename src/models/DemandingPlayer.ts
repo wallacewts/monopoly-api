@@ -13,7 +13,9 @@ export class DemandingPlayer extends Player {
         if (this.currentProperty.getRentalPrice() > this.requirementRent) {
             this.currentProperty.setOwner(this);
             this.subtractMoney(this.currentProperty.getSalePrice());
-            this.logger.info(`Comprou a propriedade ${this.currentProperty.getId()} pois o valor de aluguel dela é R$${this.currentProperty.getRentalPrice()} maior que sua exigência de R$${this.requirementRent}`, this.getProfile())
+            this.logger.info(`Comprou a propriedade em que parou pois o valor de aluguel dela é R$${this.currentProperty.getRentalPrice()} maior que sua exigência de R$${this.requirementRent}`, this.getProfile())
+        } else {
+            this.logger.info(`Não quis comprar a propriedade em que parou pois seu valor de alugel de R${this.currentProperty.getRentalPrice()} não atendia suas exigências`, this.getProfile())
         }
     }
 }
