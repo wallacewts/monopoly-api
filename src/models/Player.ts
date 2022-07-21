@@ -53,23 +53,24 @@ export class Player implements IPlayer {
     }
 
     buyCurrentProperty(): void {
+        this.logger.info(`Comprou a propriedade ${this.currentProperty.getId()}`, this.profile)
         this.currentProperty.setOwner(this);
         this.subtractMoney(this.currentProperty.getSalePrice());
-        this.logger.info(`Comprou a propriedade ${this.currentProperty.getId()}`, this.profile)
     }
 
     public moveToNextProperty(property: Property): void {
-        const owner = property.getOwner();
         this.currentProperty = property;
+        
+        this.logger.info(`Moveu para a propriedade ${this.currentProperty.getId()}`, this.profile)
+    }
 
-        if (owner && owner.getProfile() !== this.getProfile()) {
-            const rentalPrice = property.getRentalPrice();
-
-            this.logger.error(`Parou na propriedade do jogador ${owner.getProfile()} e precisou pagar R$${rentalPrice}`, this.profile)
-            this.subtractMoney(rentalPrice);
-            owner.addMoney(rentalPrice);
-        } else {
+    public verifyCanBuyProperty(): void {
+        if (this.currentProperty.getOwner()) {
+            this.logger.error(`Não pode comprar a propriedade atual pois ela já tem um dono`, this.getProfile());
+        } else if (this.money >= this.currentProperty.getSalePrice()) {
             this.buyCurrentProperty();
+        } else {
+            this.logger.error(`Não tem dinheiro para comprar a propriedade ${this.getCurrentProperty().getId()}`, this.getProfile());
         }
     }
 }

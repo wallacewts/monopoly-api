@@ -52,7 +52,7 @@ export class GameBoard {
         let round = 0;
         this.players = this.players.sort(() => Math.random() - 0.5);
 
-        while(round < 1000) {
+        while(round < 50) {
             this.players.forEach(player => {
                 round = this.handleRoundInfo(round);
                 const diceNumber = player.throwDice(this.dice);
@@ -70,7 +70,20 @@ export class GameBoard {
                 const nextProperty = this.properties[propertyIndexPosition];
     
                 player.moveToNextProperty(nextProperty);
+                player.verifyCanBuyProperty();
+                this.verifyIfProperyHasOwner(nextProperty, player);
             });
+        }
+    }
+    verifyIfProperyHasOwner(property: Property, player: IPlayer) {
+        const owner = property.getOwner();
+
+        if (owner && owner.getProfile() !== player.getProfile()) {
+            const rentalPrice = property.getRentalPrice();
+
+            this.logger.error(`Parou na propriedade do jogador ${owner.getProfile()} e precisou pagar R$${rentalPrice}`, player.getProfile())
+            player.subtractMoney(rentalPrice);
+            owner.addMoney(rentalPrice);
         }
     }
 
@@ -80,7 +93,7 @@ export class GameBoard {
         console.log('--------------------------------------');
         console.log('|                                    |');
         console.log('|                                    |');
-        console.log(`|            ROUND: ${round}              |`);
+        console.log(`            ROUND: ${round}              `);
         console.log('|                                    |');
         console.log('|                                    |');
         console.log('--------------------------------------');
@@ -93,7 +106,7 @@ export class GameBoard {
     }
 
     private applyFullBackBonus(player: IPlayer): void {
-        player.addMoney(this.fullBackBonus);
         this.logger.info(`Completou uma volta no tabuleiro e recebeu R$${this.fullBackBonus} como bônus`, player.getProfile())
+        player.addMoney(this.fullBackBonus);
     }
 }

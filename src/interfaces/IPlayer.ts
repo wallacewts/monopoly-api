@@ -14,4 +14,8 @@ export interface IPlayer {
     getProfile(): string;
     
     getMoney(): number;
+
+    getCurrentProperty(): Property;
+
+    verifyCanBuyProperty(): void;
 }
