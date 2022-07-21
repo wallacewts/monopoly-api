@@ -35,4 +35,8 @@ export class Property {
     public getSalePrice(): number {
         return this.salePrice;
     }
+
+    public removeOwner(): void {
+        this.owner = null;
+    }
 }

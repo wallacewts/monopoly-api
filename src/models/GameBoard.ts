@@ -11,6 +11,7 @@ export class GameBoard {
     private fullBackBonus = 100;
     private dice  = [1, 2, 3, 4, 5, 6];
     private players;
+    private finishedPlayers: IPlayer[] = [];
     private properties;
     private logger;
 
@@ -52,7 +53,7 @@ export class GameBoard {
         let round = 0;
         this.players = this.players.sort(() => Math.random() - 0.5);
 
-        while(round < 50) {
+        while(this.finishedPlayers.length !== 2) {
             this.players.forEach(player => {
                 round = this.handleRoundInfo(round);
                 const diceNumber = player.throwDice(this.dice);
@@ -72,9 +73,25 @@ export class GameBoard {
                 player.moveToNextProperty(nextProperty);
                 player.verifyCanBuyProperty();
                 this.verifyIfProperyHasOwner(nextProperty, player);
+                this.verifyPlayerNegativeBalance(player);
             });
         }
     }
+
+    verifyPlayerNegativeBalance(player: IPlayer) {
+        if (player.getMoney() < 0) {
+            const playerIndex = this.players.indexOf(player);
+            const removedPlayer = this.players.splice(playerIndex, 1)[0];
+            this.finishedPlayers.unshift(removedPlayer);
+
+            this.properties
+                .filter(property => property.getOwner()?.getProfile() === removedPlayer.getProfile())
+                .forEach(property => property.removeOwner());
+
+            this.logger.error(`Ficou com saldo negativo e foi removido do jogo`, player.getProfile())
+        }
+    }
+
     verifyIfProperyHasOwner(property: Property, player: IPlayer) {
         const owner = property.getOwner();
 
@@ -108,5 +125,9 @@ export class GameBoard {
     private applyFullBackBonus(player: IPlayer): void {
         this.logger.info(`Completou uma volta no tabuleiro e recebeu R$${this.fullBackBonus} como bônus`, player.getProfile())
         player.addMoney(this.fullBackBonus);
+    }
+
+    public getFinishedPlayers(): IPlayer[] {
+        return this.finishedPlayers;
     }
 }
