@@ -1,7 +1,13 @@
+import Logger from "@ptkdev/logger";
 import { Property } from "../models/Property";
 
 export interface IPlayer {
-    throwDice(dice: number[], gameBoard: Property[]): void 
+    profile: string
+    money: number
+    currentProperty: Property;
+    logger: Logger;
+
+    throwDice(dice: number[]): number; 
 
     subtractMoney(money: number): void;
 

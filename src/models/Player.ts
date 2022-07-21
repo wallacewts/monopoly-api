@@ -4,10 +4,10 @@ import { Property } from "./Property"
 import Logger from '@ptkdev/logger'
 
 export class Player implements IPlayer {
-    private profile: string
-    private money: number
-    protected currentProperty: Property;
-    protected logger: Logger;
+    profile: string
+    money: number
+    currentProperty: Property;
+    logger: Logger;
 
     constructor(profile: string, currentProperty: Property, logger: Logger) {
         this.profile = profile
