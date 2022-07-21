@@ -103,15 +103,18 @@ export class GameBoard {
 
     verifyPlayerNegativeBalance(player: IPlayer) {
         if (player.getMoney() < 0) {
+            this.logger.error(`Ficou com saldo negativo e foi removido do jogo`, player.getProfile())
+
             const playerIndex = this.players.indexOf(player);
             const removedPlayer = this.players.splice(playerIndex, 1)[0];
             this.finishedPlayers.unshift(removedPlayer);
 
             this.properties
                 .filter(property => property.getOwner()?.getProfile() === removedPlayer.getProfile())
-                .forEach(property => property.removeOwner());
-
-            this.logger.error(`Ficou com saldo negativo e foi removido do jogo`, player.getProfile())
+                .forEach(property => {
+                    property.removeOwner();
+                    this.logger.error(`Propriedade ${property.getId()} removida, agora pode ser comprada por outros jogadores`, player.getProfile())
+                });
         }
     }
 
