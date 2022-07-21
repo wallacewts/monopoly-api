@@ -7,6 +7,7 @@
 #### Execução
 - https://github.com/wallacewts/monopoly-api.git
 - cd monopoly-api
+- cp .env.example .env
 - yarn install
 - yarn dev
 - Enviar requisição HTTP GET para rota http://localhost:8080/jogo/simular
