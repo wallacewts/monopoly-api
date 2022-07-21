@@ -5,8 +5,8 @@ import { GameBoard } from './models/GameBoard'
 
 dotenv.config();
 
-const app = express()
-const port = 8080
+const app = express();
+const port = process.env.APP_PORT || 8080;
 
 app.get('/jogo/simular', (request, response) => {
     const gameBoard = new GameBoard();
